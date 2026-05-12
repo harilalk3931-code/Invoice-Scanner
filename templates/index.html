@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Intelligence | GST Scanner</title>
+    <!-- Tailwind CSS for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(229, 231, 235, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen">
+
+    <div class="max-w-4xl mx-auto py-12 px-4">
+        <!-- Header -->
+        <div class="text-center mb-10">
+            <div class="inline-flex items-center justify-center p-3 bg-blue-600 rounded-xl shadow-lg shadow-blue-200 mb-4">
+                <i data-lucide="scan-line" class="text-white w-8 h-8"></i>
+            </div>
+            <h1 class="text-4xl font-bold text-slate-900 tracking-tight">Invoice Intelligence</h1>
+            <p class="text-slate-500 mt-2 text-lg">AI-powered GST extraction to Excel in seconds.</p>
+        </div>
+
+        <div class="glass-card rounded-2xl shadow-xl overflow-hidden">
+            <!-- Alert Messages -->
+            {% if error %}
+            <div class="bg-red-50 border-l-4 border-red-500 p-4 m-6">
+                <div class="flex items-center">
+                    <i data-lucide="alert-circle" class="text-red-500 mr-3"></i>
+                    <p class="text-red-700 font-medium">{{ error }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Upload Section -->
+            <form method="post" enctype="multipart/form-data" class="p-8 border-b border-slate-100">
+                <div class="relative group">
+                    <input type="file" name="file" accept="image/*" required
+                        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                    <div class="border-2 border-dashed border-slate-300 group-hover:border-blue-500 group-hover:bg-blue-50 transition-all rounded-xl p-10 text-center">
+                        <i data-lucide="upload-cloud" class="mx-auto w-12 h-12 text-slate-400 group-hover:text-blue-500 mb-4"></i>
+                        <p class="text-slate-600 font-semibold text-lg">Click to upload or drag and drop</p>
+                        <p class="text-slate-400 text-sm">Supports JPG, PNG (Max 5MB)</p>
+                    </div>
+                </div>
+                
+                <div class="mt-6 flex justify-center">
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition-all flex items-center gap-2 transform hover:scale-105 active:scale-95">
+                        <i data-lucide="cpu" class="w-5 h-5"></i>
+                        Run OCR Extraction
+                    </button>
+                </div>
+            </form>
+
+            <!-- Results Section -->
+            {% if data %}
+            <div class="p-8 bg-white">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2">
+                        <i data-lucide="table" class="text-blue-600"></i> Extracted Insights
+                    </h2>
+                    {% if excel_ready %}
+                    <a href="/download" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-lg font-semibold transition-colors shadow-md">
+                        <i data-lucide="file-spreadsheet" class="w-5 h-5"></i>
+                        Download .XLSX
+                    </a>
+                    {% endif %}
+                </div>
+
+                <div class="overflow-x-auto rounded-xl border border-slate-200">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50">
+                                <th class="px-6 py-4 text-sm font-semibold text-slate-600 border-b">Document Field</th>
+                                <th class="px-6 py-4 text-sm font-semibold text-slate-600 border-b">Extracted Value</th>
+                                <th class="px-6 py-4 text-sm font-semibold text-slate-600 border-b">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            {% for key, value in data.items() %}
+                            <tr class="hover:bg-blue-50/50 transition-colors">
+                                <td class="px-6 py-4 text-sm font-bold text-slate-700 uppercase tracking-wider">{{ key }}</td>
+                                <td class="px-6 py-4 text-sm text-slate-600">
+                                    <span class="bg-white border px-3 py-1 rounded shadow-sm font-mono text-blue-700">{{ value }}</span>
+                                </td>
+                                <td class="px-6 py-4 text-xs font-semibold">
+                                    <span class="inline-flex items-center gap-1 text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
+                                        <i data-lucide="check-circle-2" class="w-3 h-3"></i> Verified
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Footer Info -->
+        <p class="text-center text-slate-400 text-sm mt-8">
+            Built with PaddleOCR & Python Flask • Powered by GitHub Codespaces
+        </p>
+    </div>
+
+    <!-- Initialize Lucide Icons -->
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
